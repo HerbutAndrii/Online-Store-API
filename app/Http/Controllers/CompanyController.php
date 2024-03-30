@@ -2,41 +2,53 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CompanyRequest;
+use App\Http\Requests\StoreCompanyRequest;
+use App\Http\Requests\UpdateCompanyRequest;
 use App\Http\Resources\CompanyResource;
 use App\Models\Company;
 
 class CompanyController extends Controller
 {
     public function index() {
-        return CompanyResource::collection(Company::orderByDesc('updated_at')->get());
+        $companies = Company::with('products')->orderByDesc('updated_at')->get();
+
+        return CompanyResource::collection($companies);
     }
 
     public function show(Company $company) {
-        return new CompanyResource($company);
+        return new CompanyResource($company->load('products'));
     }
 
-    public function store(CompanyRequest $request) {
-        $company = Company::create(['name' => $request->name]);
+    public function store(StoreCompanyRequest $request) {
+        $company = new Company($request->only('name', 'description'));
+        $company->user()->associate($request->user());
+        $company->save();
 
         return [
-            'status' => 'Company was created successfully',
+            'message' => 'Company was created successfully',
             'company' => new CompanyResource($company)
         ];
     }
 
-    public function update(CompanyRequest $request, Company $company) {
-        $company->update(['name' => $request->name]);
+    public function update(UpdateCompanyRequest $request, Company $company) {
+        $this->authorize('update', $company);
+
+        $company->update([
+            'name' => $request->name ?? $company->name,
+            'description' => $request->description ?? $company->description
+        ]);
 
         return [
-            'status' => 'Company was updated successfully',
-            'company' => new CompanyResource($company)
+            'message' => 'Company was updated successfully',
+            'company' => new CompanyResource($company->load('products'))
         ];
     }
 
     public function destroy(Company $company) {
+        $this->authorize('delete', $company);
+
         $company->delete();
 
-        return ['status' => 'Company was deleted successfully'];
+        return ['message' => 'Company was deleted successfully'];
     }
 }

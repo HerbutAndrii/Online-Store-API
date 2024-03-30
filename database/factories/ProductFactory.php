@@ -19,7 +19,9 @@ class ProductFactory extends Factory
         return [
             'name' => ucfirst(fake()->word()),
             'description' => fake()->sentences(5, true),
+            'price' => rand(1,1000),
             'rate' => rand(0,10),
+            'user_id' => rand(1,3),
             'company_id' => rand(1,5),
             'category_id' => rand(1,5)
         ];

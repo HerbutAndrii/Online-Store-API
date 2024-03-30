@@ -6,7 +6,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class ProductRequest extends FormRequest
+class UpdateProductRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,11 +24,19 @@ class ProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['string', 'required'],
-            'description' => ['string', 'required'],
-            'company' => ['numeric', 'required'],
-            'category' => ['numeric', 'required'],
+            'name' => ['string', 'nullable'],
+            'description' => ['string', 'nullable'],
+            'price' => ['numeric', 'nullable'],
+            'company' => ['numeric', 'exists:companies,id', 'nullable'],
+            'category' => ['numeric', 'exists:categories,id', 'nullable'],
         ];
+    }
+
+    protected function passedValidation()
+    {
+        if(! $this->user()->hasCompany($this->company)) {
+            return abort(403, 'You are not the owner of the company');
+        }
     }
 
     public function failedValidation(Validator $validator) 

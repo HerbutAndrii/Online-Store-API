@@ -17,7 +17,9 @@ class CompanyFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => ucfirst(fake()->word())
+            'name' => ucfirst(fake()->word()),
+            'description' => fake()->sentences(5, true),
+            'user_id' => rand(1,3)
         ];
     }
 }

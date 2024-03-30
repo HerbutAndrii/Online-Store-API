@@ -17,8 +17,10 @@ class CompanyResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'products' => ProductResource::collection($this->products),
-            'publication_date' => $this->updated_at->format('Y-m-d H:i:s')
+            'description' => $this->description,
+            'owner' => $this->when($request->user()->isAdmin(), new UserResource($this->user)),
+            'products' => ProductResource::collection($this->whenLoaded('products')),
+            'publication_date' => (string) $this->updated_at
         ];
     }
 }
