@@ -62,4 +62,8 @@ class User extends Authenticatable
     public function hasCompany(int $id) {
         return $this->companies()->where('id', $id)->exists();
     }
+
+    public function ratings() {
+        return $this->hasMany(Rating::class);
+    }
 }

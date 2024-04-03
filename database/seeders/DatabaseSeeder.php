@@ -7,6 +7,7 @@ namespace Database\Seeders;
 use App\Models\Category;
 use App\Models\Company;
 use App\Models\Product;
+use App\Models\Rating;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -26,7 +27,11 @@ class DatabaseSeeder extends Seeder
         User::factory(3)->create();
         Company::factory(5)->create();
         Category::factory(5)->create();
-        Product::factory(5)->create();
+        Product::factory(5)->create()->each(function ($product) {
+            $ratings = Rating::factory(rand(0,10))->create(['product_id' => $product->id]);
+            $product->rate = $ratings->avg('rate');
+            $product->save();
+        });
 
         // \App\Models\User::factory(10)->create();
 
