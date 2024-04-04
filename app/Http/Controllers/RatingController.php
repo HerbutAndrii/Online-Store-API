@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class RatingController extends Controller
 {
-    public function create(RatingRequest $request, Product $product) {
+    public function store(RatingRequest $request, Product $product) {
         if($rate = $product->ratings()->where('user_id', $request->user()->id)) {
             $rate->delete();
         }

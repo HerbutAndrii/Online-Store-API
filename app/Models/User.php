@@ -59,11 +59,15 @@ class User extends Authenticatable
         return $this->hasMany(Category::class);
     }
 
-    public function hasCompany(int $id) {
+    public function hasCompany($id) {
         return $this->companies()->where('id', $id)->exists();
     }
 
     public function ratings() {
         return $this->hasMany(Rating::class);
+    }
+
+    public function productsInCart() {
+        return $this->belongsToMany(Product::class, 'cart');
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ProductController;
@@ -25,9 +26,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('categories', CategoryController::class);
     Route::apiResource('users', UserController::class)->middleware('admin');
 
-    Route::post('/ratings/create/{product}', [RatingController::class, 'create']);
+    Route::post('/ratings/create/{product}', [RatingController::class, 'store']);
     Route::post('/ratings/delete/{product}', [RatingController::class, 'destroy']);
     
+    Route::get('/cart', [CartController::class, 'index']);
+    Route::post('/cart/add/{product}', [CartController::class, 'store']);
+    Route::post('/cart/remove/{product}', [CartController::class, 'destroy']);
+
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 

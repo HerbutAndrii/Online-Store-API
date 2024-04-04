@@ -29,8 +29,7 @@ class DatabaseSeeder extends Seeder
         Category::factory(5)->create();
         Product::factory(5)->create()->each(function ($product) {
             $ratings = Rating::factory(rand(0,10))->create(['product_id' => $product->id]);
-            $product->rate = $ratings->avg('rate');
-            $product->save();
+            $product->update(['rate' => $ratings->avg('rate') ?? 0]);
         });
 
         // \App\Models\User::factory(10)->create();
