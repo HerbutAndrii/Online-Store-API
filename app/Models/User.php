@@ -70,4 +70,8 @@ class User extends Authenticatable
     public function productsInCart() {
         return $this->belongsToMany(Product::class, 'cart');
     }
+
+    public function reviews() {
+        return $this->hasMany(Review::class);
+    }
 }

@@ -30,4 +30,8 @@ class Product extends Model
     public function usersWhoHaveProductInCart() {
         return $this->belongsToMany(User::class, 'cart');
     } 
+
+    public function reviews() {
+        return $this->hasMany(Review::class);
+    }
 }
