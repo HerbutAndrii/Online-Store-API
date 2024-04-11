@@ -29,6 +29,7 @@ class StoreProductRequest extends FormRequest
             'price' => ['numeric', 'required'],
             'company' => ['numeric', 'exists:companies,id', 'required'],
             'category' => ['numeric', 'exists:categories,id', 'required'],
+            'tags' => ['array', 'nullable'],
         ];
     }
 

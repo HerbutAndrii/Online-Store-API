@@ -29,6 +29,7 @@ class UpdateProductRequest extends FormRequest
             'price' => ['numeric', 'nullable'],
             'company' => ['numeric', 'exists:companies,id', 'nullable'],
             'category' => ['numeric', 'exists:categories,id', 'nullable'],
+            'tags' => ['array', 'nullable'],
         ];
     }
 

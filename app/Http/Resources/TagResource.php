@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ProductResource extends JsonResource
+class TagResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,14 +17,8 @@ class ProductResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'description' => $this->description,
-            'price' => $this->price . '$',
-            'rate' => $this->rate,
-            'company' => new CompanyResource($this->whenLoaded('company')),
-            'category' => new CategoryResource($this->whenLoaded('category')),
-            'tags' => TagResource::collection($this->whenLoaded('tags')),
             'owner' => $this->when($request->user()->isAdmin(), new UserResource($this->user)),
-            'publication_date' => (string) $this->updated_at
+            'created_at' => (string) $this->updated_at
         ];
     }
 }

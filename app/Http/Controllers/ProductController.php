@@ -10,13 +10,13 @@ use App\Models\Product;
 class ProductController extends Controller
 {
     public function index() {
-        $products = Product::with('company', 'category')->orderByDesc('rate')->get();
+        $products = Product::with('company', 'category', 'tags')->orderByDesc('rate')->get();
 
         return ProductResource::collection($products);
     }
 
     public function show(Product $product) {
-        return new ProductResource($product->load('company', 'category'));
+        return new ProductResource($product->load('company', 'category', 'tags'));
     }
 
     public function store(StoreProductRequest $request) {
@@ -26,9 +26,13 @@ class ProductController extends Controller
         $product->category()->associate($request->category);
         $product->save();
 
+        if($request->has('tags')) {
+            $product->tags()->attach($request->tags);
+        }
+
         return [
             'message' => 'Product was created successfully',
-            'product' => new ProductResource($product->load('company', 'category'))
+            'product' => new ProductResource($product->load('company', 'category', 'tags'))
         ];
     }
 
@@ -44,10 +48,14 @@ class ProductController extends Controller
         $product->category()->associate($request->category ?? $product->category);
         
         $product->save();
+
+        if($request->has('tags')) {
+            $product->tags()->sync($request->tags);
+        }
         
         return [
             'message' => 'Product was updated successfully',
-            'product' => new ProductResource($product->load('company', 'category'))
+            'product' => new ProductResource($product->load('company', 'category', 'tags'))
         ];
     }
 
