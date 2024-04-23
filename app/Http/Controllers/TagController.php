@@ -6,11 +6,14 @@ use App\Http\Requests\StoreTagRequest;
 use App\Http\Requests\UpdateTagRequest;
 use App\Http\Resources\TagResource;
 use App\Models\Tag;
+use Illuminate\Support\Facades\Cache;
 
 class TagController extends Controller
 {
     public function index() {
-        $tags = Tag::orderByDesc('updated_at')->get();
+        $tags = Cache::remember('tags', 60, function () {
+            return Tag::orderByDesc('updated_at')->get();
+        });
 
         return TagResource::collection($tags);
     }

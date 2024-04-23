@@ -7,15 +7,18 @@ use App\Http\Requests\ReviewUpdateRequest;
 use App\Http\Resources\ReviewResource;
 use App\Models\Product;
 use App\Models\Review;
+use Illuminate\Support\Facades\Cache;
 
 class ReviewController extends Controller
 {
     public function index(Product $product) {
-        $reviews = Review::with('product', 'user')
+        $reviews = Cache::remember('reviews', 60, function () use ($product) {
+            return Review::with('product', 'user')
                 ->where('product_id', $product->id)
                 ->orderByDesc('updated_at')
                 ->get();
-
+        });
+        
         return ReviewResource::collection($reviews);
     }
 

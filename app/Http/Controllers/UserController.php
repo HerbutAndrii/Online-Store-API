@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 
 class UserController extends Controller
 {
     public function index() {
-        $users = User::with('products')->orderByDesc('updated_at')->get();
+        $users = Cache::remember('users', 60, function () {
+            return User::with('products')->orderByDesc('updated_at')->get();
+        });
 
         return UserResource::collection($users);
     }

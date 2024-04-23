@@ -6,11 +6,14 @@ use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
+use Illuminate\Support\Facades\Cache;
 
 class CategoryController extends Controller
 {
     public function index() {
-        $categories = Category::with('products')->orderByDesc('updated_at')->get();
+        $categories = Cache::remember('categories', 60, function () {
+            return Category::with('products')->orderByDesc('updated_at')->get();
+        });
 
         return CategoryResource::collection($categories);
     }

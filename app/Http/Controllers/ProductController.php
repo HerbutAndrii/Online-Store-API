@@ -6,11 +6,14 @@ use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
+use Illuminate\Support\Facades\Cache;
 
 class ProductController extends Controller
 {
     public function index() {
-        $products = Product::with('company', 'category', 'tags')->orderByDesc('rate')->get();
+        $products = Cache::remember('products', 60, function () {
+            return Product::with('company', 'category', 'tags')->orderByDesc('rate')->get();
+        });
 
         return ProductResource::collection($products);
     }

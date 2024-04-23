@@ -6,11 +6,14 @@ use App\Http\Requests\StoreCompanyRequest;
 use App\Http\Requests\UpdateCompanyRequest;
 use App\Http\Resources\CompanyResource;
 use App\Models\Company;
+use Illuminate\Support\Facades\Cache;
 
 class CompanyController extends Controller
 {
     public function index() {
-        $companies = Company::with('products')->orderByDesc('updated_at')->get();
+        $companies = Cache::remember('companies', 60, function () {
+            return Company::with('products')->orderByDesc('updated_at')->get();
+        });
 
         return CompanyResource::collection($companies);
     }
