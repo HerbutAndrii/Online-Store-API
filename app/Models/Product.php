@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -37,5 +38,36 @@ class Product extends Model
 
     public function tags() {
         return $this->belongsToMany(Tag::class);
+    }
+
+    public function discount() {
+        return $this->hasOne(Discount::class);
+    }
+
+    public function hasDiscount() {
+        $discount = $this->discount;
+
+        return $discount && $discount->start_date <= now() && $discount->end_date >= now();
+    }
+
+    public function getDiscountPercentageAttribute() {
+        $discount = $this->discount;
+
+        return $discount ? $discount->percentage . '%' : null;
+    }
+
+    protected function price() : Attribute
+    {
+        return Attribute::make(
+            get: function ($value) {
+                $discount = $this->discount;
+
+                if ($discount && $discount->start_date <= now() && $discount->end_date >= now()) {
+                    return $value - ($value * ($discount->percentage / 100)) . '$';
+                }
+
+                return $value . '$';
+            },
+        );
     }
 }

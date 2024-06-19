@@ -23,10 +23,8 @@ class ProductController extends Controller
     }
 
     public function store(StoreProductRequest $request) {
-        $product = new Product($request->only('name', 'description', 'price'));
+        $product = new Product($request->validated());
         $product->user()->associate($request->user());
-        $product->company()->associate($request->company);
-        $product->category()->associate($request->category);
         $product->save();
 
         if($request->has('tags')) {
@@ -42,16 +40,10 @@ class ProductController extends Controller
     public function update(UpdateProductRequest $request, Product $product) {
         $this->authorize('update', $product);
 
-        $data = $request->only('name', 'description', 'price');
-        if(! empty(array_filter($data))) {
-            $product->fill($data);
+        if(! empty(array_filter($request->validated()))) {
+            $product->update($request->validated());
         }
         
-        $product->company()->associate($request->company ?? $product->company);
-        $product->category()->associate($request->category ?? $product->category);
-        
-        $product->save();
-
         if($request->has('tags')) {
             $product->tags()->sync($request->tags);
         }

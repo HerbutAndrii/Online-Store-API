@@ -27,15 +27,15 @@ class StoreProductRequest extends FormRequest
             'name' => ['string', 'required'],
             'description' => ['string', 'required'],
             'price' => ['numeric', 'required'],
-            'company' => ['numeric', 'exists:companies,id', 'required'],
-            'category' => ['numeric', 'exists:categories,id', 'required'],
+            'company_id' => ['numeric', 'exists:companies,id', 'required'],
+            'category_id' => ['numeric', 'exists:categories,id', 'required'],
             'tags' => ['array', 'nullable'],
         ];
     }
 
     protected function passedValidation()
     {
-        if(! $this->user()->hasCompany($this->company)) {
+        if(! $this->user()->hasCompany($this->company_id)) {
             return abort(403, 'You are not the owner of the company');
         }
     }

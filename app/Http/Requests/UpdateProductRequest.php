@@ -27,20 +27,20 @@ class UpdateProductRequest extends FormRequest
             'name' => ['string', 'nullable'],
             'description' => ['string', 'nullable'],
             'price' => ['numeric', 'nullable'],
-            'company' => ['numeric', 'exists:companies,id', 'nullable'],
-            'category' => ['numeric', 'exists:categories,id', 'nullable'],
+            'company_id' => ['numeric', 'exists:companies,id', 'nullable'],
+            'category_id' => ['numeric', 'exists:categories,id', 'nullable'],
             'tags' => ['array', 'nullable'],
         ];
     }
 
     protected function passedValidation()
     {
-        if(! $this->user()->hasCompany($this->company)) {
+        if($this->company_id && ! $this->user()->hasCompany($this->company_id)) {
             return abort(403, 'You are not the owner of the company');
         }
     }
 
-    public function failedValidation(Validator $validator) 
+    protected function failedValidation(Validator $validator) 
     {
         throw new HttpResponseException(response()->json([
             'errors' => $validator->errors()

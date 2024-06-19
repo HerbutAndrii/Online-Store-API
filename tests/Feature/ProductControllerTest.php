@@ -6,13 +6,14 @@ use App\Models\Category;
 use App\Models\Company;
 use App\Models\Product;
 use App\Models\User;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class ProductControllerTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     private $user;
     private $product;
@@ -59,8 +60,8 @@ class ProductControllerTest extends TestCase
             'name' => 'Test name',
             'description' => 'Test description',
             'price' => 200,
-            'company' => $this->company->id,
-            'category' => $this->category->id
+            'company_id' => $this->company->id,
+            'category_id' => $this->category->id
         ]);
 
         $response->assertOk();
@@ -82,8 +83,8 @@ class ProductControllerTest extends TestCase
             'name' => 'New name',
             'description' => 'New description',
             'price' => 250,
-            'company' => $this->company->id,
-            'category' => $this->category->id
+            'company_id' => $this->company->id,
+            'category_id' => $this->category->id
         ]);
 
         $response->assertOk();
